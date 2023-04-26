@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Modal, SafeAreaView } from 'react-native';
 import {
   StyleSheet,
   View,
@@ -8,6 +7,7 @@ import {
   FlatList,
 } from 'react-native';
 import Store from '../models/secureStore';
+import { StackActions } from '@react-navigation/native';
 
 const LandingPage = ({ navigation }) => {
   const [showBrokerages, setShowBrokerages] = useState(false);
@@ -25,15 +25,14 @@ const LandingPage = ({ navigation }) => {
     {
       id: '1',
       name: 'Alpaca',
-      color: '#3c3c3c', // Alpaca color
+      color: '#e8c003', // Alpaca color
     },
     // Add more brokerages here
   ];
 
   const handleBrokeragePress = (name) => {
     // Handle brokerage press here
-    console.log("damn", name)
-    navigation.navigate(name);
+    navigation.dispatch(StackActions.push(name));
 };
 
   const renderItem = ({ item }) => (
@@ -71,7 +70,7 @@ const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: '#2f1412',
+    backgroundColor: '#fff',
   },
   container: {
     flex: 1,

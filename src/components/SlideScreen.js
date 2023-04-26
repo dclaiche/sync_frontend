@@ -1,11 +1,26 @@
 // SlideScreen.js
-import React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { Text, View, StyleSheet, TouchableOpacity, Linking, Modal, Button } from 'react-native';
 
-const SlideScreen = ({ text }) => {
+const SlideScreen = () => {
+  const handleOpenLink = async () => {
+    const supported = await Linking.canOpenURL('https://app.alpaca.markets/signup');
+
+    if (supported) {
+      await Linking.openURL('https://app.alpaca.markets/signup');
+      
+    } else {
+      Alert.alert("Can't open the URL");
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>{text}</Text>
+      <Text style={styles.textBold}>Sign Up!</Text>
+      <Text style={styles.textMessage}>First go to the Alpaca website and create an account.</Text>
+      <TouchableOpacity onPress={handleOpenLink}>
+        <Text style={styles.textLink}>Alpace Signup</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -13,12 +28,27 @@ const SlideScreen = ({ text }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
   },
-  text: {
+  textMessage: {
     fontSize: 24,
+    marginRight: 20,
+    marginBottom: 20,
+    marginLeft: 20,
   },
+  textLink: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#e8c003',
+  },
+  textBold: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  
 });
 
 export default SlideScreen;
+

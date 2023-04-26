@@ -1,7 +1,6 @@
 // TabNavigator.js
 import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import Signin from '../screens/signin';
 import Profile from '../screens/profile';
 import Investing from '../screens/investing';
 

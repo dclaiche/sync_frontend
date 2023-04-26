@@ -25,8 +25,7 @@ const Signin = ({ navigation }) => {
             email: email,
             password: password
         }
-        
-        const response = await axios.post('http://192.168.1.11:8080/auth/login', config);
+        const response = await axios.post('http://192.168.1.9:8080/auth/login', config);
         Store.delete('token');
         Store.save('token', response.data);
         navigation.navigate('LandingPage');
@@ -66,7 +65,7 @@ const Signin = ({ navigation }) => {
           onChangeText={setPassword}
           value={password}
           placeholder="Password"
-          secureTextEntry
+          secureTextEntry={true}
           autoCompleteType="password"
           returnKeyType="done"
         />

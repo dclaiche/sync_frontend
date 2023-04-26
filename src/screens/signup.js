@@ -23,12 +23,12 @@ const Signup = ({ navigation }) => {
 
   const handleSignUp = async () => {
     try {
-        const response = await axios.post('http://192.168.1.11:8080/user/signup', {
+      const response = await axios.post('http://192.168.1.9:8080/user/signup', {
       email: email,
       password: password,
       phone: null
     });
-    Store.save(email, response.data);
+    Store.save('token', response.data);
     navigation.navigate('LandingPage');
     } catch (error) {
         console.log(error);

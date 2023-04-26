@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
-import { Button, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView} from 'react-native';
 import PagerView from 'react-native-pager-view';
 import SlideScreen from '../components/SlideScreen';
+import SlideScreen2 from '../components/SlideScreen2';
+import SlideScreen3 from '../components/SlideScreen3';
+import { ScrollView } from 'react-native-gesture-handler';
+import Icon from 'react-native-vector-icons/Feather';
+import { StackActions } from '@react-navigation/native';
 
-const ModalContent = () => {
+const Alpaca = ({ navigation }) => {
   const [selectedPageIndex, setSelectedPageIndex] = useState(0);
+  
 
   const onPageSelected = e => {
     setSelectedPageIndex(e.nativeEvent.position);
@@ -27,40 +33,61 @@ const ModalContent = () => {
   };
 
   return (
+    <SafeAreaView style={styles.container}>
     <View style={styles.container}>
+      <Icon name="x" size={25} marginLeft={15} onPress={() => navigation.dispatch(StackActions.pop(1))}/>
+      <ScrollView contentContainerStyle={styles.contentContainer}>
+      <View style={styles.logoContainer}>
+        <Image style={styles.logo} source={require('../../assets/alpaca_logo.jpg')}/>
+      </View>
       <PagerView
         style={styles.viewPager}
         initialPage={0}
         onPageSelected={onPageSelected}>
         <View key="1">
-          <SlideScreen text="Welcome to Screen 1" />
+          <SlideScreen/>
         </View>
         <View key="2">
-          <SlideScreen text="Welcome to Screen 2" />
+          <SlideScreen2/>
         </View>
         <View key="3">
-          <SlideScreen text="Welcome to Screen 3" />
+          <SlideScreen3 navigation={navigation}/>
         </View>
       </PagerView>
-      <View style={styles.buttonContainer}>
-        <Button title="Get Started" onPress={() => {}} />
-      </View>
+      </ScrollView>
       <View style={styles.dotContainer}>{renderDots()}</View>
     </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  icon: {
+    size: 25,
+    marginLeft: 15,
+  },
+  contentContainer: {
+    width: '100%',
+    height: '100%',
+ 
+  },
   container: {
+    backgroundColor: '#fff',
     flex: 1,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    height: '25%',
+  },
+  logo: {
+    width: 200,
+    height: 200,
+    resizeMode: 'contain',
+    marginBottom: 20,
   },
   viewPager: {
-    flex: 1,
-  },
-  buttonContainer: {
-    position: 'absolute',
-    bottom: 60,
-    alignSelf: 'center',
+    width: '100%',
+    height: '70%'
   },
   dotContainer: {
     flexDirection: 'row',
@@ -75,11 +102,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   activeDot: {
-    backgroundColor: 'blue',
+    backgroundColor: '#e8c003',
   },
   inactiveDot: {
     backgroundColor: 'gray',
   },
 });
 
-export default ModalContent;
+export default Alpaca;
