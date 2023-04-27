@@ -23,7 +23,8 @@
           "NSAllowsLocalNetworking": true,
           "NSIncludesSubdomains": true,
           "NSExceptionAllowsInsecureHTTPLoads": true
-      }
+      },
+      "NSCameraUsageDescription": "This app uses the verify user identity before accessing the app on tabout/logout."
       },
       "config": {
         "usesNonExemptEncryption": false

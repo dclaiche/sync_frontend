@@ -18,7 +18,6 @@ const AlpacaSignup = ({navigation, modalVisible, setModalVisible}) => {
        
         // TODO fix navigation
         const token = await Store.get('token');
-        console.log("key ", key)
         try{
             const response = await axios.post('http://192.168.1.9:8080/user/alpaca_signup', {"key": key, "secret": secret}, {headers: {Authorization: `Bearer ${token}`}})
             Store.save('token', response.data);
