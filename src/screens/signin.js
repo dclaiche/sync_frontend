@@ -19,6 +19,15 @@ const Signin = ({ navigation }) => {
 
   const passwordInputRef = useRef(null);
 
+  const getAccountAlpaca = async (token) => {
+    try {
+      const response = await axios.get('http://192.168.1.9:8080/trader/account', { headers: { Authorization: `Bearer ${token}` } });
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
   const handleSignIn = async () => {
     try {
         const config = {
@@ -28,7 +37,11 @@ const Signin = ({ navigation }) => {
         const response = await axios.post('http://192.168.1.9:8080/auth/login', config);
         Store.delete('token');
         Store.save('token', response.data);
+        if (await getAccountAlpaca(response.data)) {
+          navigation.navigate('AppTabs');
+        } else {
         navigation.navigate('LandingPage');
+        }
     } catch (error) {
         console.log(error);
     }

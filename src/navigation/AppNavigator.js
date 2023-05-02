@@ -22,8 +22,7 @@ const AppNavigator = () => {
   const appState = useRef(AppState.currentState);
   const [appStateVisible, setAppStateVisible] = useState(appState.current);
   const navigation = useNavigation(); // Add this line to get the navigation object
-  const [tabbedOut, setTabbedOut] = useState(false);
-  const isFocused = useIsFocused();
+
 
     const checkToken = async () => {
       const token = await Store.get('token');
@@ -53,6 +52,10 @@ const AppNavigator = () => {
 
     useEffect(() => {
       const subscription = AppState.addEventListener('change', async nextAppState => {
+        if (appState.current.match(/background/)) {
+          console.log('nav');
+          navigation.navigate('AuthLogin');
+        }
         if (
           appState.current.match(/background/) &&
           nextAppState === 'active'

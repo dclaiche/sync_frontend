@@ -4,6 +4,7 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import Profile from '../screens/profile';
 import Investing from '../screens/investing';
 
+
 const Tab = createMaterialBottomTabNavigator();
 
 const TabNavigator = () => {

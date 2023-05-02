@@ -21,16 +21,13 @@ const AlpacaSignup = ({navigation, modalVisible, setModalVisible}) => {
         try{
             const response = await axios.post('http://192.168.1.9:8080/user/alpaca_signup', {"key": key, "secret": secret}, {headers: {Authorization: `Bearer ${token}`}})
             Store.save('token', response.data);
-            console.log(response.data);
             setModalVisible(false);
             navigation.navigate('AppTabs');
         }
         catch(error){
             setKey('');
             setSecret('');
-            console.log(error)
         }
-        
     };
 
     const toggleSecure = () => {
