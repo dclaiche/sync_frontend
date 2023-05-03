@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import Store from '../models/secureStore';
-
+import DatabaseManager from '../models/databaseManager';
+import UserDTO from '../models/userDTO';
 
 const Signup = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -28,7 +29,13 @@ const Signup = ({ navigation }) => {
       password: password,
       phone: null
     });
-    Store.save('token', response.data);
+    const databaseManager = DatabaseManager.getInstance();
+    // Insert User info into database
+    const user = new UserDTO(response.data.user.id, response.data.user.email, response.data.user.phone, response.data.user.creator_status);
+    const result = databaseManager.insertUser(user);
+    console.log(result);
+    Store.save('userid', response.data.user.id.toString());
+    Store.save('token', response.data.token);
     navigation.navigate('LandingPage');
     } catch (error) {
         console.log(error);

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   ScrollView,
@@ -6,9 +6,30 @@ import {
   Text,
   TouchableOpacity,
 } from 'react-native';
+import DatabaseManager from '../models/databaseManager';
+import Store from '../models/secureStore';
 
 const Profile = () => {
   const [creatorStatus, setCreatorStatus] = useState(false);
+  const [user_id, setUser_id] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [phone, setPhone] = useState(null);
+
+
+  const loadProfileData = async () => {
+    const databaseManager = DatabaseManager.getInstance();
+    const userid = await Store.get('userid');
+    const result = await databaseManager.getUser(1);
+    const user = result._array[0];
+    setUser_id(userid);
+    setEmail(user.email);
+    setPhone(user.phone);
+    setCreatorStatus(user.creator_status === 1 ? true : false);
+  };
+
+  useEffect(() => {
+    loadProfileData();
+  }, []);
 
   const handleEditProfilePress = () => {
     // Empty onPress handler for the "Edit Profile" link
@@ -22,7 +43,7 @@ const Profile = () => {
     <View style={styles.wrapper}>
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.userInfo}>
-        <Text style={styles.username}>Username</Text>
+        <Text style={styles.username}>UserID: {user_id}</Text>
         <TouchableOpacity onPress={handleEditProfilePress}>
           <Text style={styles.editProfileLink}>Edit Profile</Text>
         </TouchableOpacity>
@@ -42,6 +63,12 @@ const Profile = () => {
             <Text style={styles.becomeCreatorLink}>Become one today!</Text>
           </TouchableOpacity>
         )}
+      </View>
+      <View style={styles.separator} />
+      <View style={styles.investingSection}>
+        <Text style={styles.sectionTitle}>Email & Phone</Text>
+        <Text style={styles.investingText}>email: {email}</Text>
+        <Text style={styles.investingText}>phone: {phone}</Text>
       </View>
     </ScrollView>
     </View>
