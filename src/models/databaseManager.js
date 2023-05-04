@@ -71,7 +71,7 @@ class DatabaseManager {
                     `,
                     [id],
                     (tx, resultSet) => {
-                        resolve(resultSet.rows);
+                        resolve(resultSet.rows._array);
                     },
                     (error) => {
                         reject(error);

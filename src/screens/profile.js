@@ -19,8 +19,8 @@ const Profile = () => {
   const loadProfileData = async () => {
     const databaseManager = DatabaseManager.getInstance();
     const userid = await Store.get('userid');
-    const result = await databaseManager.getUser(1);
-    const user = result._array[0];
+    const result = await databaseManager.getUser(userid);
+    const user = result[0];
     setUser_id(userid);
     setEmail(user.email);
     setPhone(user.phone);

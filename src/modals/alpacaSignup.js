@@ -160,10 +160,9 @@ const AlpacaSignup = ({navigation, modalVisible, setModalVisible}) => {
                                 />
                                 <Icon style={styles.searchIcon} name={secure2 ? "eye-off" : "eye"} size={30} color="gray" onPress={toggleSecure2}/>
                             </View>
-                            <TouchableOpacity style={styles.submitButtonContainer}>
+                            <TouchableOpacity style={styles.submitButtonContainer} onPress={handleSubmission}>
                                 <Text
                                     style={styles.submitButton}
-                                    onPress={handleSubmission}
                                 >Submit</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.dismissButtonContainer}>

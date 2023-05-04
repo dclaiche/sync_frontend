@@ -9,9 +9,12 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  Dimensions
 } from 'react-native';
 import axios from 'axios';
 import Store from '../models/secureStore';
+
+const { width, height } = Dimensions.get('window');
 
 const Signin = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -40,7 +43,7 @@ const Signin = ({ navigation }) => {
         if (await getAccountAlpaca(response.data)) {
           navigation.navigate('AppTabs');
         } else {
-        navigation.navigate('LandingPage');
+        navigation.navigate('BrokeragePage');
         }
     } catch (error) {
         console.log(error);
@@ -56,17 +59,21 @@ const Signin = ({ navigation }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
+      <View style={styles.logoContainer}>
+          <Image
+            style={styles.logo}
+            source={require('../../assets/logo.png')}
+          />
+        </View>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Sync</Text>
+        </View>
       <View style={styles.innerContainer}>
-        <Image
-          style={styles.logo}
-          source={require('../../assets/logo.png')}
-        />
-        <Text style={styles.welcome}>Welcome</Text>
         <TextInput
           style={styles.input}
           onChangeText={setEmail}
           value={email}
-          placeholder="Email"
+          placeholder="Email Address"
           keyboardType="email-address"
           autoCompleteType="email"
           returnKeyType="next"
@@ -97,6 +104,24 @@ const Signin = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  logoContainer: {
+    alignItems: 'center',
+    marginTop: height * 0.1,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    resizeMode: 'contain',
+  },
+  titleContainer: {
+    alignItems: 'center',
+    marginTop: height * 0.05,
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#8a2be2',
+  },
   container: {
     flex: 1,
   },
@@ -106,20 +131,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
   },
-  logo: {
-    width: 200,
-    height: 200,
-    resizeMode: 'contain',
-    marginBottom: 20,
-  },
-  welcome: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
   input: {
     width: '100%',
-    height: 40,
+    height: 50,
     borderColor: 'gray',
     borderWidth: 1,
     paddingHorizontal: 10,

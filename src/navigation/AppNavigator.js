@@ -2,7 +2,7 @@
 import { createStackNavigator } from '@react-navigation/stack';
 import Signin from '../screens/signin';
 import TabNavigator from './TabNavigator';
-import LandingPage from '../screens/landingPage';
+import BrokeragePage from '../screens/brokeragePage';
 import Signup from '../screens/signup';
 import Alpaca from '../screens/alpaca';
 import Store from '../models/secureStore';
@@ -11,6 +11,7 @@ import { useRef, useEffect, useState } from 'react';
 import { AppState } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import Welcome from '../screens/welcome';
 
 
 const Stack = createStackNavigator();
@@ -28,16 +29,16 @@ const AppNavigator = () => {
       if (token) {
         const status = await checkAccount(token);
         if (status.status === 'none' || status.status === 'User not found') {
-          setInitialRoute('Signup');
+          setInitialRoute('Welcome');
         } else if (status.status === 'Missing key or secret') {
-          setInitialRoute('LandingPage');
+          setInitialRoute('BrokeragePage');
         } else if (status.status === 'both') {
           setInitialRoute('AuthLogin');
         } else {
           setInitialRoute('Signin');
         }
       } else {
-        setInitialRoute('Signin');
+        setInitialRoute('Welcome');
       }
     };
 
@@ -70,7 +71,7 @@ const AppNavigator = () => {
             if (status.status === 'none' || status.status === 'User not found') {
               navigation.navigate('Signup');
             } else if (status.status === 'Missing key or secret') {
-              // Do nothing and stay on landingpage
+              // Do nothing and stay on BrokeragePage
             } else if (status.status === 'both') {
               navigation.navigate('AuthLogin');
             } else {
@@ -98,10 +99,11 @@ const AppNavigator = () => {
     <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Signin" component={Signin} />
       <Stack.Screen name="Signup" component={Signup} />
-      <Stack.Screen name="LandingPage" component={LandingPage} />
+      <Stack.Screen name="BrokeragePage" component={BrokeragePage} />
       <Stack.Screen name="Alpaca" component={Alpaca} />
       <Stack.Screen name="AppTabs" component={TabNavigator} />
       <Stack.Screen name="AuthLogin" component={AuthLogin}/>
+      <Stack.Screen name="Welcome" component={Welcome}/>
     </Stack.Navigator>
   );
 };

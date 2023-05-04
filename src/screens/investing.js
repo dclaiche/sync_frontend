@@ -7,7 +7,8 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
-  ActivityIndicator 
+  SafeAreaView,
+  StatusBar
 } from 'react-native';
 import moment from 'moment';
 import * as haptics from 'expo-haptics';
@@ -17,9 +18,10 @@ import Store from '../models/secureStore';
 const Investing = () => {
   const [timeframe, setTimeframe] = useState('1M');
   const [buyingPower, setBuyingPower] = useState(0);
-  const [equity, setEquity] = useState(0);
-  const [baseValue, setBaseValue] = useState(0);
+  const [equity, setEquity] = useState(parseFloat(0.00));
+  const [baseValue, setBaseValue] = useState(0.00);
   const [data, setData] = useState([]);
+  const [LineChartColor, setLineChartColor] = useState('#32d142');
 
   function getCurrentDate() {
     const date = new Date();
@@ -32,10 +34,10 @@ const Investing = () => {
 
   const loadData = async () => {
     const token = await Store.get('token');
+    
     const config = {
       'date_end': getCurrentDate(),
       "period": "all",
-      "timeframe": "1D",
       "extended_hours": false
     }
     const headers = { headers: { Authorization: `Bearer ${token}` } }
@@ -43,13 +45,20 @@ const Investing = () => {
     const data = await axios.post('http://192.168.1.9:8080/user/setup', config, headers)
     setBaseValue(data.data.baseValue);
     setEquity(parseFloat(data.data.equity[data.data.equity.length-1].toFixed(2)));
-    const filteredData = filterDataByTimeframe(data.data, '1M');
-    setData(filteredData);
+    const filteredData = filterDataByTimeframe(data.data, timeframe);
+    console.log(filteredData)
+    if (filteredData[filteredData.length-1].value >= filteredData[0].value) {
+      setLineChartColor('#32d142');
+    } else {
+      setLineChartColor('#ff3903');
+    }
+    const filledData = fillMissingData(filteredData, timeframe);
+    setData(filledData);
   }
 
   useEffect(() => { 
     loadData();
-  }, []);
+  }, [timeframe]);
 
   const handleTimeframePress = (newTimeframe) => {
     setTimeframe(newTimeframe);
@@ -98,6 +107,34 @@ const Investing = () => {
     return result;
   };
 
+  function fillMissingData(data, timeframe) {
+    const startDate = data[0].timestamp * 1000; // Convert to milliseconds
+    const endDate = data[data.length - 1].timestamp * 1000;
+  
+    const newData = [];
+  
+    const oneDay = 24 * 60 * 60 * 1000; // Milliseconds in one day
+  
+    let currentIndex = 0;
+  
+    for (let currentDate = startDate; currentDate <= endDate; currentDate += oneDay) {
+      if (currentIndex < data.length - 1 && currentDate >= data[currentIndex + 1].timestamp * 1000) {
+        currentIndex++;
+      }
+  
+      if (timeframe === '1M' && new Date(currentDate).getMonth() !== new Date(data[currentIndex].timestamp * 1000).getMonth()) {
+        continue;
+      }
+  
+      newData.push({
+        timestamp: Math.floor(currentDate / 1000),
+        value: data[currentIndex].value
+      });
+    }
+  
+    return newData;
+  }
+
 const invokeHaptic = () => {
   haptics.impactAsync(haptics.ImpactFeedbackStyle.Light);
 }
@@ -123,19 +160,20 @@ const onCurrentIndexChange = (index) => {
 }
 
   return (
-    <View style={styles.wrapper}>
+    <SafeAreaView style={styles.wrapper}>
+      <StatusBar barStyle="dark-content" />
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.totalValue}>Total Portfolio Value: ${equity}</Text>
-      <Text style={styles.buyingPower}>Buying Power: ${buyingPower}</Text>
-      <Text style={styles.dayTraderStatus}>Day Trader Status: False</Text>
-      <View style={styles.separator} />
+      <View style={styles.valueBox}>
+      <Text style={styles.totalValueTitle}>Investing</Text>
+      <Text style={styles.totalValue}>${equity}</Text>
+      </View>
+        <View style={styles.bottomContainer}>
             <View style={styles.graphContainer}>
               {data.length === 0 ? <Text style={styles.emptyText}>No data to display</Text> : <LineChart.Provider data={data} onCurrentIndexChange={onCurrentIndexChange}>
               <LineChart width={Dimensions.get('window').width} height={150}>
-                <LineChart.Path />
+                <LineChart.Path color={LineChartColor}/>
                 <LineChart.CursorLine />
                 <LineChart.CursorCrosshair onActivated={invokeHaptic} onEnded={endTouch}>
-                
                 <LineChart.Tooltip position="bottom">
                   <LineChart.DatetimeText format={({value}) => {'worklet'; 
                   const newdate = formatDateLong(value)
@@ -145,16 +183,14 @@ const onCurrentIndexChange = (index) => {
               </LineChart>
             </LineChart.Provider>}
               </View>
-
               <View style={styles.timeframeTabs}>
                 {['1D', '3D', '7D', '1M', '3M', '6M', 'All'].map((tf) => (
-                  <TouchableOpacity key={tf} onPress={() => handleTimeframePress(tf)}>
-                    <Text style={[styles.timeframeText, timeframe === tf ? styles.activeTimeframe : null]}>{tf}</Text>
+                  <TouchableOpacity key={tf} style={[{ borderRadius: 5 }, timeframe === tf ? styles.activeTimeframe && {backgroundColor: LineChartColor}: styles.activeTimeframe && {backgroundColor: "transparent"}]} onPress={() => handleTimeframePress(tf)}>
+                    <Text style={[styles.timeframeText, timeframe === tf ? { color: "#fff"} : {color: LineChartColor}]}>{tf}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
-            
-
+        
       <View style={styles.separator} />
 
       <View style={styles.creatorList}>
@@ -176,12 +212,19 @@ const onCurrentIndexChange = (index) => {
         </TouchableOpacity>
         </View>
       </View>
+      </View>
     </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  valueBox: {
+    flex: 1,
+    flexDirection: 'column',
+    marginLeft: 16,
+    alignItems: 'flex-start',
+  },
   tooltip: {
     backgroundColor: 'black',
     borderRadius: 4,
@@ -194,7 +237,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 170,
     marginTop: 64,
-    marginBottom: 24
+    marginBottom: 0
   },
   wrapper: {
       flex: 1,
@@ -202,15 +245,24 @@ const styles = StyleSheet.create({
       },
   container: {
     flexGrow: 1,
-    justifyContent: 'space-evenly',
-    alignItems: 'center',
+    justifyContent: 'space-around',
     backgroundColor: '#fff',
     paddingVertical: 20,
   },
+  bottomContainer: {
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  totalValueTitle: {
+    marginBottom: 10,
+    marginTop: 20,
+    fontSize: 32,
+    color: '#121212',
+  },
   totalValue: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#e7a0ae',
+    fontSize: 32,
+    color: '#121212',
   },
   buyingPower: {
     fontSize: 18,
@@ -238,17 +290,18 @@ const styles = StyleSheet.create({
   },
     timeframeTabs: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     width: '100%',
     paddingHorizontal: 50,
     },
     timeframeText: {
+    borderRadius: 5,
+    padding: 4,
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#c76982',
     },
     activeTimeframe: {
-    color: '#e7a0ae',
+    backgroundColor: '#c76982',
     },
     creatorList: {
     flexDirection: 'row',

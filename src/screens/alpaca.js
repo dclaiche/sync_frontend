@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Image, SafeAreaView} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, SafeAreaView} from 'react-native';
 import PagerView from 'react-native-pager-view';
 import SlideScreen from '../components/SlideScreen';
 import SlideScreen2 from '../components/SlideScreen2';
@@ -8,13 +8,21 @@ import { ScrollView } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Feather';
 import { StackActions } from '@react-navigation/native';
 
+
 const Alpaca = ({ navigation }) => {
   const [selectedPageIndex, setSelectedPageIndex] = useState(0);
-  
 
-  const onPageSelected = e => {
-    setSelectedPageIndex(e.nativeEvent.position);
+  const onPageScroll = e => {
+    const position = e.nativeEvent.position;
+    const offset = e.nativeEvent.offset;
+
+    if (offset > 0.5) {
+      setSelectedPageIndex(position + 1);
+    } else {
+      setSelectedPageIndex(position);
+    }
   };
+  
 
   const renderDots = () => {
     const dots = [];
@@ -43,7 +51,7 @@ const Alpaca = ({ navigation }) => {
       <PagerView
         style={styles.viewPager}
         initialPage={0}
-        onPageSelected={onPageSelected}>
+        onPageScroll={onPageScroll}>
         <View key="1">
           <SlideScreen/>
         </View>

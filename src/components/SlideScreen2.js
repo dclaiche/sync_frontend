@@ -1,6 +1,5 @@
 // SlideScreen.js
-import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Linking, Modal, Button } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 
 const SlideScreen2 = () => {
   const handleOpenLink = async () => {
