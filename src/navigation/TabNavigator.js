@@ -8,7 +8,6 @@ import Investing from '../screens/investing';
 const Tab = createMaterialBottomTabNavigator();
 
 const TabNavigator = () => {
-
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Investing" component={Investing} />

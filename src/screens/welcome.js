@@ -4,7 +4,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
-const Welcome = () => {
+const Welcome = ({ navigation }) => {
+
+const handleSignUpPress = () => {
+    navigation.navigate('Signup');
+};
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>

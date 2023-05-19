@@ -23,7 +23,7 @@ const AuthLogin = ({ navigation }) => {
             if (await getAccountAlpaca(token)) {
                 navigation.navigate('AppTabs');
             } else {
-              navigation.navigate('LandingPage');
+              navigation.navigate('BrokeragePage');
             }
           } 
     };

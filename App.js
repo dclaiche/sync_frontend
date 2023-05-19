@@ -33,3 +33,4 @@ export default function App() {
 //TODO: Start SQLITE DB and store data from loaddata call into DB DONE
 // Fix CSS on Investment Screen and refactor code
 // TODO PUSH NOTIFICATIONS
+//START ON LISTING CREATORS

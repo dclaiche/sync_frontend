@@ -13,7 +13,8 @@ import {
 import * as haptics from 'expo-haptics';
 import axios from 'axios';
 import Store from '../models/secureStore';
-import { LongPressGestureHandler, State } from 'react-native-gesture-handler';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Graph from '../components/graph';
 
 
 const Investing = () => {
@@ -28,7 +29,10 @@ const Investing = () => {
   const dataRef = useRef(data);
   const profitLossDataRef = useRef(profitLossData);
   const profitLossPercentDataRef = useRef(profitLossPercentData);
-  const [timeoutRef, setTimeoutRef] = useState(null);
+  const [prompt, setPrompt] = useState('Past Week');
+  const [baseValue, setBaseValue] = useState(0);
+  const [isTouching, setIsTouching] = useState(false);
+  const isTouchingRef = useRef(isTouching);
 
 
   const loadData = async () => {
@@ -69,21 +73,27 @@ const Investing = () => {
     let timeframe;
     switch (period) {
       case '1D':
+        setPrompt('Today');
         timeframe = '5Min';
         break;
       case '1W':
+        setPrompt('Past Week');
         timeframe = '15Min';
         break;
       case '1M':
+        setPrompt('Past Month');
         timeframe = '1D';
         break;
       case '3M':
+        setPrompt('Past 3 Months');
         timeframe = '1D';
         break;
       case '1Y':
+        setPrompt('Past Year');
         timeframe = '1D';
         break;
       case 'All':
+        setPrompt('All Time');
         timeframe = '1D';
       default:
     }
@@ -92,7 +102,6 @@ const Investing = () => {
     // setup config for the request
     const token = await Store.get('token');
     const config = {
-      'date_end': nowFormatted,
       "period": period === '1Y' ? '1A' : period,
       "timeframe": timeframe,
       "extended_hours": false
@@ -103,6 +112,8 @@ const Investing = () => {
     // format data
     setProfitLossData(response.data.profit_loss);
     setProfitLossPercentData(response.data.profit_loss_pct);
+    setBaseValue(response.data.base_value);
+    setProfitLoss(parseFloat(response.data.equity[response.data.equity.length-1] - response.data.base_value).toFixed(2));
     const result = response.data.timestamp.map((timestamp, index) => {
       return {
         timestamp: timestamp,
@@ -113,15 +124,37 @@ const Investing = () => {
   };
 
 const invokeHaptic = () => {
+  setIsTouching(true);
   haptics.impactAsync(haptics.ImpactFeedbackStyle.Light);
 }
 
 
 const endTouch = () => {
+  setIsTouching(false);
   setEquity(parseFloat(data[data.length-1].value.toFixed(2)));
-  setProfitLoss(0)
+  setProfitLoss(parseFloat(data[data.length-1].value - baseValue).toFixed(2));
   setProfitLossPercent(0)
+  switch (period) {
+    case '1D':
+      setPrompt('Today');
+      break;
+    case '1W':
+      setPrompt('Past Week');
+      break;
+    case '1M':
+      setPrompt('Past Month');
+      break;
+    case '3M':
+      setPrompt('Past 3 Months');
+      break;
+    case '1Y':
+      setPrompt('Past Year');
+      break;
+    case 'All':
+      setPrompt('All Time');
+    default:
   haptics.impactAsync(haptics.ImpactFeedbackStyle.Light);
+}
 }
 
 function formatDateLong(timestamp, period) {
@@ -194,14 +227,6 @@ function formatDateLong(timestamp, period) {
   return displayTime;
 }
 
-const onLongPressHandlerStateChange = ({ nativeEvent }) => {
-  if (nativeEvent.state === State.ACTIVE) {
-    invokeHaptic();
-  } else if (nativeEvent.state === State.END) {
-    endTouch();
-  }
-};
-
 const onCurrentIndexChange = useCallback(
   (index) => {
     setEquity(parseFloat(dataRef.current[index].value.toFixed(2)));
@@ -210,6 +235,7 @@ const onCurrentIndexChange = useCallback(
   },
   []
 );
+
   return (
     <SafeAreaView style={styles.wrapper}>
       <StatusBar barStyle="dark-content" />
@@ -217,35 +243,10 @@ const onCurrentIndexChange = useCallback(
       <View style={styles.valueBox}>
       <Text style={styles.totalValueTitle}>Portfolio</Text>
       <Text style={styles.totalValue}>${equity}</Text>
-      {profitLossPercent !== 0 ? <Text style={[profitLossPercent < 0 ? {color: '#ff3903'} : {color: '#32d142'}]}>${Math.abs(profitLoss)} {Math.abs(profitLossPercent)}%</Text> : null}
+      {profitLossPercent !== 0 ? <View style={styles.prompt}><AntDesign name={[profitLossPercent < 0 ? 'caretdown' : 'caretup']} style={[profitLossPercent < 0 ? {color: '#ff3903'} : {color: '#32d142'}]}/><Text style={[profitLossPercent < 0 ? {color: '#ff3903'} : {color: '#32d142'}]}>  ${Math.abs(profitLoss)} {Math.abs(profitLossPercent)}%</Text></View> : <View style={styles.prompt}><AntDesign name={[profitLossPercent < 0 ? 'caretdown' : 'caretup']} style={[profitLossPercent < 0 ? {color: '#ff3903'} : {color: '#32d142'}]}/><Text style={[profitLossPercent < 0 ? {color: '#ff3903'} : {color: '#32d142'}]}> ${Math.abs(profitLoss)}</Text>{ isTouching ? null : <Text> {prompt}</Text>}</View>}
       </View>
         <View style={styles.bottomContainer}>
-            <View style={styles.graphContainer}>
-              {data.length === 0 ? <Text style={styles.emptyText}>No data to display</Text> :
-               <LineChart.Provider data={data} onCurrentIndexChange={onCurrentIndexChange}>
-              <LineChart width={Dimensions.get('window').width} height={150}>
-                <LineChart.Path color={LineChartColor}></LineChart.Path>
-                <LineChart.CursorLine/>
-                <LineChart.CursorCrosshair color={LineChartColor} onActivated={invokeHaptic} onEnded={endTouch} minDurationMs={200}>
-                <LineChart.Tooltip cursorGutter={100} position="top">
-                  <LineChart.DatetimeText format={({value}) => {
-                    'worklet'
-                    const dateval = formatDateLong(value, period)
-                    return dateval}}/>
-                </LineChart.Tooltip>
-              </LineChart.CursorCrosshair>
-              </LineChart>
-            </LineChart.Provider>
-            }
-            
-              </View>
-              <View style={styles.periodTabs}>
-                {['1D', '1W', '1M', '3M', '1Y', 'All'].map((tf) => (
-                  <TouchableOpacity key={tf} style={[{ borderRadius: 5 }, period === tf ? styles.activeTimeframe && {backgroundColor: LineChartColor}: styles.activeTimeframe && {backgroundColor: "transparent"}]} onPress={() => handleTimeframePress(tf)}>
-                    <Text style={[styles.periodText, period === tf ? { color: "#fff"} : {color: LineChartColor}]}>{tf}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
+        <Graph data={data} LineChartColor={LineChartColor} onCurrentIndexChange={onCurrentIndexChange} invokeHaptic={invokeHaptic} endTouch={endTouch} period={period} formatDateLong={formatDateLong} handleTimeframePress={handleTimeframePress}/>
       <View style={styles.separator} />
       <View style={styles.creatorList}>
         {Array(3).fill().map((_, i) => (
@@ -272,8 +273,9 @@ const onCurrentIndexChange = useCallback(
 };
 
 const styles = StyleSheet.create({
-  diffText: {
-
+  prompt: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   valueBox: {
     flex: 1,
