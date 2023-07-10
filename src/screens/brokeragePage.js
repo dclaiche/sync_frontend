@@ -11,14 +11,13 @@ import {
 } from 'react-native';
 import Store from '../models/secureStore';
 import { StackActions } from '@react-navigation/native';
-import ImageOverlay from "react-native-image-overlay";
 
 const BrokeragePage = ({ navigation }) => {
   
 
   const handleSignOutPress = () => {
     Store.delete('token');
-    navigation.navigate('Signin');
+    navigation.navigate('Welcome');
   };
 
   const brokerages = [

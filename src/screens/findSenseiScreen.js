@@ -1,27 +1,65 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList, Text, Image, TouchableHighlight } from 'react-native';
 import { Searchbar, Button } from 'react-native-paper';
-import { ListItem, Avatar, Text } from 'react-native-elements';
 import { Ionicons } from '@expo/vector-icons';
+import { StackActions } from '@react-navigation/native';
 
 const DATA = [
   // Add your data here, each item should have id, name, and profit properties
+  {
+    id : 1,
+    profilePic : require('../../assets/alpaca2.png'),
+    name : 'John Doe',
+    profit : 20,
+    period : '1 month'
+  },
+  {
+    id : 2,
+    profilePic : require('../../assets/alpaca2.png'),
+    name : 'Baby Yoda',
+    profit : 100,
+    period : 'year'
+  },
 ];
 
-const FindSenseiScreen = () => {
+const FindSenseiScreen = ({navigation}) => {
+  const [color, setColor] = useState('#e8c003'); // Alpaca color
   const [searchQuery, setSearchQuery] = useState('');
   const [filter, setFilter] = useState('Popular');
 
   const onChangeSearch = query => setSearchQuery(query);
 
+  const onSenseiPress = (senseiData) => {
+    // Handle sensei press here
+    navigation.dispatch(StackActions.push('Sensei', senseiData));
+  };
+
   const renderItem = ({ item }) => (
-    <ListItem bottomDivider>
-      <Avatar source={{uri: item.profilePic}} />
-      <ListItem.Content>
-        <ListItem.Title>{item.name}</ListItem.Title>
-        <ListItem.Subtitle>{item.profit}% yearly average profit</ListItem.Subtitle>
-      </ListItem.Content>
-    </ListItem>
+      <View key={item.id}>
+        <View style={[styles.brokerageCard]}>
+          <View style={styles.cardContainer}>
+            <TouchableHighlight 
+            onPress={() => {
+                onSenseiPress(item);
+              }}>
+            <View style={styles.card}>
+              <Image source={item.profilePic} style={styles.logo}/>
+              <View style={styles.cardText}>
+                <Text style={styles.brokerageText}>{item.name}</Text>
+                <View style={styles.average}>
+                  <Text style={[item.profit < 0 ? {color : '#ff3903'} : {color: '#32d142'} ]}>{Math.abs(item.profit)}% </Text>
+                  <Text>avg. {item.period}</Text>
+                </View>
+              </View>
+              <View style={styles.arrowContainer}>
+                <Text style={styles.arrow}>&#707;</Text>
+              </View>
+            </View>
+            </TouchableHighlight>
+            <View style={styles.separator}/>
+          </View>
+        </View>
+      </View>
   );
 
   return (
@@ -54,11 +92,29 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
+  average: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  cardText: {
+    marginLeft: 20,
+  },
   title: {
     fontSize: 30,
     fontWeight: 'bold',
-    textAlign: 'left',
+    textAlign: 'center',
     marginBottom: 10,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  separator: {
+    height: 1,
+    width: '90%',
+    backgroundColor: 'lightgray',
+    alignSelf: 'center',
   },
   searchSection: {
     flexDirection: 'row',
@@ -70,6 +126,31 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 10,
+  },
+  brokerageText: {
+    fontSize: 18,
+    color: '#121212',
+    marginLeft: 0,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    borderRadius: 30,
+ 
+  },
+  arrowContainer: {
+    flex: 1,
+    alignItems: 'flex-end',
+    
+  },
+  brokerageCard: {
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  arrow: {
+    fontSize: 50,
+    color: 'lightgray',
+    fontWeight: 'bold',
   },
 });
 

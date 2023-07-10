@@ -9,6 +9,10 @@ const Welcome = ({ navigation }) => {
 const handleSignUpPress = () => {
     navigation.navigate('Signup');
 };
+
+const handleSignInPress = () => {
+  navigation.navigate('Signin');
+};
   return (
     <View style={styles.container}>
       <View style={styles.logoContainer}>
@@ -31,7 +35,7 @@ const handleSignUpPress = () => {
                 underlayColor="#8a2be230"
                 activeOpacity={0.5}
                 style={styles.signUpButton}
-                onPress={() => {}}
+                onPress={handleSignUpPress}
             >
                 <View>
                 <Text style={styles.signUpButtonText}>SIGN UP FOR FREE</Text>
@@ -40,7 +44,7 @@ const handleSignUpPress = () => {
             <TouchableHighlight
                 underlayColor="#8a2be230"
                 style={styles.loginButton}
-                onPress={() => {}}
+                onPress={handleSignInPress}
             >
                 <View>
                 <Text style={styles.loginButtonText}>LOG IN</Text>

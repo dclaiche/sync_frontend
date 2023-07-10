@@ -12,6 +12,9 @@ import { AppState } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import Welcome from '../screens/welcome';
+import FindSenseiScreen from '../screens/findSenseiScreen';
+import Sensei from '../screens/sensei';
+import { center } from '@shopify/react-native-skia';
 
 
 const Stack = createStackNavigator();
@@ -31,7 +34,7 @@ const AppNavigator = () => {
         if (status.status === 'none' || status.status === 'User not found') {
           setInitialRoute('Welcome');
         } else if (status.status === 'Missing key or secret') {
-          setInitialRoute('BrokeragePage');
+          setInitialRoute('FindSenseiScreen');
         } else if (status.status === 'both') {
           setInitialRoute('AuthLogin');
         } else {
@@ -44,7 +47,7 @@ const AppNavigator = () => {
 
     const checkAccount = async (token) => {
       try {
-        const response = await axios.get('http://192.168.1.9:8080/user/check-account', { headers: { Authorization: `Bearer ${token}` } });
+        const response = await axios.get('http://192.168.1.10:8080/user/check-account', { headers: { Authorization: `Bearer ${token}` } });
         return {status: 'both'};
       } catch (error) {
         if (error.response) {
@@ -72,13 +75,12 @@ const AppNavigator = () => {
               navigation.navigate('Signup');
             } else if (status.status === 'Missing key or secret') {
               // Do nothing and stay on BrokeragePage
-            } else if (status.status === 'both') {
-              navigation.navigate('AuthLogin');
             } else {
-              navigation.navigate('Signin');
+              // status.status === 'both'
+              navigation.navigate('AuthLogin');
             }
           } else {
-            navigation.navigate('Signin');
+            navigation.navigate('Welcome');
           }
         }
         appState.current = nextAppState;
@@ -96,14 +98,18 @@ const AppNavigator = () => {
     }
  
   return (
-    <Stack.Navigator initialRouteName={initialRoute} screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Signin" component={Signin} />
-      <Stack.Screen name="Signup" component={Signup} />
-      <Stack.Screen name="BrokeragePage" component={BrokeragePage} />
-      <Stack.Screen name="Alpaca" component={Alpaca} />
-      <Stack.Screen name="AppTabs" component={TabNavigator} />
-      <Stack.Screen name="AuthLogin" component={AuthLogin}/>
-      <Stack.Screen name="Welcome" component={Welcome}/>
+    <Stack.Navigator initialRouteName={initialRoute}>
+      <Stack.Group screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Signin" component={Signin} />
+        <Stack.Screen name="Signup" component={Signup} />
+        <Stack.Screen name="BrokeragePage" component={BrokeragePage} />
+        <Stack.Screen name="Alpaca" component={Alpaca} />
+        <Stack.Screen name="AppTabs" component={TabNavigator} />
+        <Stack.Screen name="AuthLogin" component={AuthLogin}/>
+        <Stack.Screen name="Welcome" component={Welcome}/>
+        <Stack.Screen name="FindSenseiScreen" component={FindSenseiScreen}/>
+      </Stack.Group>
+      <Stack.Screen name="Sensei" component={Sensei} options={{title: '', headerBackTitle: ' ', headerTintColor: 'grey', headerShadowVisible: true, statusBarAnimation: "fade"} }/>
     </Stack.Navigator>
   );
 };

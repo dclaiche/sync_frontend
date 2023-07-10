@@ -16,6 +16,7 @@ import Store from '../models/secureStore';
 import DatabaseManager from '../models/databaseManager';
 import UserDTO from '../models/userDTO';
 
+
 const { width, height } = Dimensions.get('window');
 
 const Signup = ({ navigation }) => {
@@ -27,7 +28,7 @@ const Signup = ({ navigation }) => {
 
   const handleSignUp = async () => {
     try {
-      const response = await axios.post('http://192.168.1.9:8080/user/signup', {
+      const response = await axios.post('http://192.168.1.10:8080/user/signup', {
       email: email,
       password: password,
       phone: null
@@ -39,7 +40,7 @@ const Signup = ({ navigation }) => {
     console.log(result);
     Store.save('userid', response.data.user.id.toString());
     Store.save('token', response.data.token);
-    navigation.navigate('BrokeragePage');
+    navigation.navigate('FindSenseiScreen');
     } catch (error) {
         console.log(error);
     }

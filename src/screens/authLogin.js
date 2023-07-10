@@ -9,7 +9,7 @@ const AuthLogin = ({ navigation }) => {
 
     const getAccountAlpaca = async (token) => {
         try {
-          const response = await axios.get('http://192.168.1.9:8080/trader/account', { headers: { Authorization: `Bearer ${token}` } });
+          const response = await axios.get('http://192.168.1.10:8080/trader/account', { headers: { Authorization: `Bearer ${token}` } });
           return true;
         } catch (error) {
           return false;
@@ -30,7 +30,7 @@ const AuthLogin = ({ navigation }) => {
 
     const handleSignOutPress = () => {
         Store.delete('token');
-        navigation.navigate('Signin');
+        navigation.navigate('Welcome');
       };
 
       useFocusEffect(
