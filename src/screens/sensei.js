@@ -105,8 +105,8 @@ const Sensei = ({navigation, route}) => {
       color: 'gray',
     },
     graphContainer: {
-      paddingHorizontal: 20,
-      paddingVertical: 20,
+      paddingHorizontal: 0,
+      paddingVertical: 0,
     },
     holdingsContainer: {
       paddingHorizontal: 20,

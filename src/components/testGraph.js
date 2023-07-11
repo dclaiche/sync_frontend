@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Dimensions } from 'react-native';
-import { Chart, Line, VerticalAxis, HorizontalAxis } from 'react-native-responsive-linechart';
+import { Chart, Line, VerticalAxis, HorizontalAxis, Tooltip } from 'react-native-responsive-linechart';
 
 const { width } = Dimensions.get('window');
 
@@ -170,27 +170,51 @@ const TestGraph = () => {
         return { x: timestamp, y: raw.equity[index] };
     });
 
+    const formatDate = (timestamp) => {
+        const date = new Date(timestamp * 1000); // Convert to milliseconds
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        return date.toLocaleDateString(undefined, options);
+    }
+
     const xValues = raw.timestamp;
     const yValues = raw.equity;
 
     const xMin = Math.min(...xValues);
     const xMax = Math.max(...xValues);
-    const yMin = Math.min(...yValues);
-    const yMax = Math.max(...yValues);
+    const yMin = Math.min(...yValues)*.999;
+    const yMax = Math.max(...yValues)*1.001;
 
     return (
-        <View style={{ flexDirection: 'row' }}>
-            <View style={{ flex: 1, marginLeft: 10 }}>
+        <View>
                 <Chart
                     data={data} 
-                    style={{ height: 200, width: width }}
+                    style={{ height: 200, width: width, marginTop: 0}}
                     xDomain={{ min: xMin, max: xMax }}
                     yDomain={{ min: yMin, max: yMax }}
-                    padding={{ top: 20, bottom: 20, left: 0, right: 50 }}
+                    padding={{ top: 20, bottom: 0, left: 0, right: 0 }}
+                    
                 >
-                    <Line strokeWidth={2} strokeColor={'blue'} />
+                <Line smoothing="bezier" theme={{stroke: {color: 'green', width: 4, opacity: 1, dashArray: []}}} tooltipComponent={<Tooltip theme={{ label: {
+                    color: 'black',
+                    fontSize: 12,
+                    fontWeight: 700,
+                    fontFamily: 'your font here',
+                    textAnchor: 'middle',
+                    opacity: 1,
+                    dx: 0,
+                    dy: 20,
+                },
+                shape: {
+                    width: 1,
+                    height: 200,
+                    dx: 0,
+                    dy: -85,
+                    rx: 0,
+                    color: 'black',
+                },
+                formatter: ({ x }) => formatDate(x) }} />}/>
+                <VerticalAxis theme={{axis: {visible: false}, }}/>
                 </Chart>
-            </View>
         </View>
     );
 };
