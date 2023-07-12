@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Dimensions } from 'react-native';
 import { Chart, Line, VerticalAxis, HorizontalAxis, Tooltip } from 'react-native-responsive-linechart';
+import MyToolTip from './myToolTip';
 
 const { width } = Dimensions.get('window');
 
@@ -194,25 +195,7 @@ const TestGraph = () => {
                     padding={{ top: 20, bottom: 0, left: 0, right: 0 }}
                     
                 >
-                <Line smoothing="bezier" theme={{stroke: {color: 'green', width: 4, opacity: 1, dashArray: []}}} tooltipComponent={<Tooltip theme={{ label: {
-                    color: 'black',
-                    fontSize: 12,
-                    fontWeight: 700,
-                    fontFamily: 'your font here',
-                    textAnchor: 'middle',
-                    opacity: 1,
-                    dx: 0,
-                    dy: 20,
-                },
-                shape: {
-                    width: 1,
-                    height: 200,
-                    dx: 0,
-                    dy: -85,
-                    rx: 0,
-                    color: 'black',
-                },
-                formatter: ({ x }) => formatDate(x) }} />}/>
+                <Line smoothing="none" theme={{stroke: {color: 'green', width: 4, opacity: 1, dashArray: []}, selected: {height: 5, width: 1, color: 'black'}}} tooltipComponent={<MyToolTip />}/>
                 <VerticalAxis theme={{axis: {visible: false}, }}/>
                 </Chart>
         </View>
