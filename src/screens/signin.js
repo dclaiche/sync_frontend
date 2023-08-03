@@ -25,7 +25,7 @@ const Signin = ({ navigation }) => {
 
   const getAccountAlpaca = async (token) => {
     try {
-      const response = await axios.get('http://192.168.1.10:8080/trader/account', { headers: { Authorization: `Bearer ${token}` } });
+      const response = await axios.get('http://192.168.1.13:8080/trader/account', { headers: { Authorization: `Bearer ${token}` } });
       return true;
     } catch (error) {
       return false;
@@ -38,7 +38,7 @@ const Signin = ({ navigation }) => {
             email: email,
             password: password
         }
-        const response = await axios.post('http://192.168.1.10:8080/auth/login', config);
+        const response = await axios.post('http://192.168.1.13:8080/auth/login', config);
         Store.delete('token');
         Store.save('token', response.data);
         if (await getAccountAlpaca(response.data)) {

@@ -47,7 +47,7 @@ const AppNavigator = () => {
 
     const checkAccount = async (token) => {
       try {
-        const response = await axios.get('http://192.168.1.10:8080/user/check-account', { headers: { Authorization: `Bearer ${token}` } });
+        const response = await axios.get('http://192.168.1.13:8080/user/check-account', { headers: { Authorization: `Bearer ${token}` } });
         return {status: 'both'};
       } catch (error) {
         if (error.response) {

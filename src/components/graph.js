@@ -2541,7 +2541,7 @@ const filterDataByPeriod = async () => {
   // }
   // const headers = { headers: { Authorization: `Bearer ${token}` } }
   // make request
-  //const response = await axios.post('http://192.168.1.10:8080/user/setup', config, headers)
+  //const response = await axios.post('http://192.168.1.13:8080/user/setup', config, headers)
   // format data
   setProfitLossData(response.profit_loss);
   setProfitLossPercentData(response.profit_loss_pct);

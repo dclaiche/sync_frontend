@@ -195,7 +195,7 @@ const TestGraph = () => {
                     padding={{ top: 20, bottom: 0, left: 0, right: 0 }}
                     
                 >
-                <Line smoothing="none" theme={{stroke: {color: 'green', width: 4, opacity: 1, dashArray: []}, selected: {height: 5, width: 1, color: 'black'}}} tooltipComponent={<MyToolTip />}/>
+                <Line smoothing="none" theme={{stroke: {color: '#32d142', width: 4, opacity: 1, dashArray: []}, selected: {height: 5, width: 1, color: 'black'}}} tooltipComponent={<MyToolTip />}/>
                 <VerticalAxis theme={{axis: {visible: false}, }}/>
                 </Chart>
         </View>

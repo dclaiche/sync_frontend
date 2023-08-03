@@ -35,7 +35,7 @@ const AlpacaSignup = ({navigation, modalVisible, setModalVisible}) => {
         }
         const headers = { headers: { Authorization: `Bearer ${token}` } }
         
-        const history = await axios.post('http://192.168.1.10:8080/user/setup', config, headers)
+        const history = await axios.post('http://192.168.1.13:8080/user/setup', config, headers)
         const historyDTOs = HistoryDTO.fromData(history.data);
         const databaseManager = DatabaseManager.getInstance();
         //databaseManager.insertHistory(historyDTOs, );
@@ -93,7 +93,7 @@ const AlpacaSignup = ({navigation, modalVisible, setModalVisible}) => {
         // TODO fix navigation
         const token = await Store.get('token');
         try{
-            const response = await axios.post('http://192.168.1.10:8080/user/alpaca_signup', {"key": key, "secret": secret}, {headers: {Authorization: `Bearer ${token}`}})
+            const response = await axios.post('http://192.168.1.13:8080/user/alpaca_signup', {"key": key, "secret": secret}, {headers: {Authorization: `Bearer ${token}`}})
             Store.save('token', response.data);
             //await firstTimeSetup();
             setModalVisible(false);

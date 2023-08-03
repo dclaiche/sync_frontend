@@ -28,7 +28,7 @@ const Signup = ({ navigation }) => {
 
   const handleSignUp = async () => {
     try {
-      const response = await axios.post('http://192.168.1.10:8080/user/signup', {
+      const response = await axios.post('http://192.168.1.13:8080/user/signup', {
       email: email,
       password: password,
       phone: null

@@ -9,7 +9,7 @@ const AuthLogin = ({ navigation }) => {
 
     const getAccountAlpaca = async (token) => {
         try {
-          const response = await axios.get('http://192.168.1.10:8080/trader/account', { headers: { Authorization: `Bearer ${token}` } });
+          const response = await axios.get('http://192.168.1.13:8080/trader/account', { headers: { Authorization: `Bearer ${token}` } });
           return true;
         } catch (error) {
           return false;

@@ -17,9 +17,9 @@ const MyTooltip = (props) => {
 
   return (
     <React.Fragment>
-      <Rect
+       <Rect
         x={position.x - shape.width / 2 + shape.dx}
-        y={position.y - shape.height / 2 - shape.dy}
+        y={0}
         rx={shape.rx}
         fill={shape.color}
         opacity={shape.opacity}
@@ -27,8 +27,8 @@ const MyTooltip = (props) => {
         width={shape.width}
       />
       <Text
-        x={position.x + label.dx}
-        y={position.y - label.dy}
+        x={position.x }
+        y={-10}
         fontSize={label.fontSize}
         fontWeight={label.fontWeight}
         fontFamily={label.fontFamily}
@@ -44,11 +44,17 @@ const MyTooltip = (props) => {
 
 export default MyTooltip;
 
+const formatDate = (timestamp) => {
+  const date = new Date(timestamp * 1000); // Convert to milliseconds
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString(undefined, options);
+}
+
 const defaultProps = {
   theme: {
     label: {
-      color: 'white',
-      fontSize: 12,
+      color: 'grey',
+      fontSize: 10,
       fontWeight: 700,
       textAnchor: 'middle',
       opacity: 1,
@@ -56,13 +62,13 @@ const defaultProps = {
       dy: 16.5,
     },
     shape: {
-      width: 35,
-      height: 20,
+      width: 0.5,
+      height: 180,
       dx: 0,
       dy: 20,
-      rx: 4,
-      color: 'black',
+      rx: 0,
+      color: 'grey',
     },
-    formatter: (v) => String(v.y),
+    formatter: (v) => formatDate(v.x),
   },
 };
